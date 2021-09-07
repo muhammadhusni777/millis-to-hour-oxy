@@ -148,11 +148,17 @@ if(machine_state == 0){
   
   int setting_state = digitalRead(setting_button);
   if (setting_state==0) {
-    lcd.setCursor(0, 2);
-    lcd.print("setting");
+    lcd.setCursor(16, 2);
+    lcd.print("set");
+    max_hours = map(analogRead(A0), 0, 1022, 1, 9);
+    
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+    
   } else{
-    lcd.setCursor(0, 2);
-    lcd.print("       ");
+    lcd.setCursor(16, 2);
+    lcd.print("   ");
   }
 
   
@@ -212,16 +218,16 @@ lcd.setCursor(0,0);
 lcd.print("     OXYCON-I"); 
 
 
-lcd.setCursor(15,2);
-lcd.print(cycle);
 
-lcd.setCursor(10, 2);
+lcd.setCursor(0,2);
+lcd.print("max hours on:");
+lcd.setCursor(13, 2);
 lcd.print(max_hours);
 
 lcd.setCursor(0,1);
-lcd.print("ONTIME=");
+lcd.print("ontime=");
 lcd.setCursor(7,1);
-lcd.print("S:");
+lcd.print("s:");
 
 if (seconds < 10){
 lcd.setCursor(9,1);
@@ -237,22 +243,27 @@ lcd.print(seconds);
 }
 
 lcd.setCursor(12, 1);
-lcd.print("M:");
-if (minutes > 10){
+lcd.print("m:");
+if (minutes < 10){
 lcd.setCursor(14, 1);
 lcd.print(minutes);
 lcd.setCursor(15, 1);
 lcd.print(" ");
 } 
-if (minutes <= 10){
+if (minutes >= 10){
 lcd.setCursor(14, 1);
 lcd.print(minutes);  
 }
 lcd.setCursor(17, 1);
-lcd.print("H:");
+lcd.print("h:");
 lcd.setCursor(19, 1);
 lcd.print(hours);
-  
+
+
+lcd.setCursor(0, 3);
+lcd.print("cycle:");
+lcd.setCursor(7, 3);
+lcd.print(cycle);
 /*
 
  Serial.println(Flash_Delay_2);
@@ -319,7 +330,7 @@ ISR(TIMER1_COMPA_vect){
   seconds_raw = currentMillis/1000;
   seconds = (machine_state * elapsed) + seconds;
   minutes = (seconds / 60) + minutes;
-  hours = minutes / 60;
+  hours = (minutes / 60) + hours;
   days = hours / 24;
   currentMillis %= 1000;
   seconds %= 60;
@@ -342,7 +353,7 @@ ISR(TIMER1_COMPA_vect){
  //if (pause_state != prev_pause_state){
  
  
- if (pause_state == 0 || hours > max_hours){
+ if (pause_state == 0 && hours < max_hours){
     machine_state = 1;
  }
  else{
