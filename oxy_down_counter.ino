@@ -367,7 +367,7 @@ ISR(TIMER1_COMPA_vect){
  //if (pause_state != prev_pause_state){
  
  
- if ((pause_state == 0) || (hours == 0) && (minutes==0) && (seconds == 0)){
+ if ((pause_state == 0) || ((hours == 0) && (minutes==0) && (seconds == 0))){
     machine_state = 1;
  }
  else{
