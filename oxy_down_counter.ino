@@ -36,7 +36,7 @@ int prev_pause_state;
 int save_second;
 int machine_state;
 int compressor = 11;
-
+int alarm = 13;
 unsigned long currentMillis;
 unsigned long seconds;
 unsigned long down_seconds;
@@ -86,7 +86,7 @@ void setup() {
   Serial.println("Begin conversion from millis to readable time");
   pinMode(pause_button, INPUT_PULLUP);
   pinMode(setting_button, INPUT_PULLUP);
-
+  pinMode(alarm, OUTPUT);
 
   // STARTUP
   //**************************************************************************
@@ -367,11 +367,17 @@ ISR(TIMER1_COMPA_vect){
  //if (pause_state != prev_pause_state){
  
  
- if ((pause_state == 0) || ((hours == 0) && (minutes==0) && (seconds == 0))){
+ if ((pause_state == 0) && ((hours > 0) || (minutes > 0) || (down_seconds > 0))){
     machine_state = 1;
+   
  }
  else{
    machine_state = 0;    
+    if ((hours > 0) || (minutes> 0) || (down_seconds > 0)){
+      digitalWrite(alarm, LOW);
+    } else {
+      digitalWrite(alarm, HIGH);
+    }
  }
   
  
